@@ -7,6 +7,7 @@ const require = createRequire(import.meta.url);
 const pdfParse = require('pdf-parse');
 // import * as pdfParse from "pdf-parse";
 import upload from "./utils/fileUploads.js";
+import interviewRouter from "./features/interview/interview.routes.js";
 
 dotenv.config();
 
@@ -65,6 +66,8 @@ const extractKeyword = (text: string): string[] => {
     .sort((a, b) => (frequency[b] ?? 0) - (frequency[a] ?? 0))
     .slice(0, 10);
 };
+
+app.use('/api/interview', interviewRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
