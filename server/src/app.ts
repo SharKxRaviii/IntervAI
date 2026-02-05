@@ -1,5 +1,6 @@
 import express from "express";
 import type { Request, Response } from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import interviewRouter from "./features/interview/interview.routes.js";
 import keywordRouter from "./features/keyword-extract/keyword.routes.js";
@@ -7,6 +8,13 @@ import keywordRouter from "./features/keyword-extract/keyword.routes.js";
 dotenv.config();
 
 const app = express();
+
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/", (_req: Request, res: Response) => {

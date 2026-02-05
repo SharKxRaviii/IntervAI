@@ -21,6 +21,7 @@ export default function ResumeUploader({ onKeywordsExtracted }: ResumeUploaderPr
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleFileSelect = (file: File) => {
     if (file.type !== "application/pdf") {
@@ -61,7 +62,7 @@ export default function ResumeUploader({ onKeywordsExtracted }: ResumeUploaderPr
 
     try {
       const response = await axios.post<KeywordResponse>(
-        "http://localhost:3000/upload-resume",
+        `${API_BASE_URL}/api/upload-resume`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -123,7 +124,7 @@ export default function ResumeUploader({ onKeywordsExtracted }: ResumeUploaderPr
             <FileText className="w-12 h-12 text-purple-400" />
           </motion.div>
           <h1 className="text-4xl font-bold gradient-text mb-2">
-            Resume Analyzer
+            AI Resume Scan
           </h1>
           <p className="text-gray-400">
             Upload your resume to extract the most important keywords

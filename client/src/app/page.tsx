@@ -66,7 +66,7 @@ export default function Home() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleReset}
-                  className="px-6 py-3 rounded-xl glass-effect hover:bg-white/10 border border-white/10 text-white font-medium transition-all"
+                  className="px-6 py-3 mb-6 rounded-xl glass-effect hover:bg-white/10 border border-white/10 text-white font-medium transition-all"
                 >
                   Analyze Another Resume
                 </motion.button>
@@ -82,7 +82,7 @@ export default function Home() {
         transition={{ delay: 0.5 }}
         className="absolute bottom-4 text-center text-sm text-gray-500"
       >
-        Powered by AI • Built with Next.js
+        Powered by AI • Developed by - Ravi Kumar Sahoo
       </motion.footer>
     </main>
   );
