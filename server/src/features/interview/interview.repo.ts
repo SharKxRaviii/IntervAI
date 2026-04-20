@@ -14,7 +14,7 @@ export class InterviewAI {
         }
     }
 
-    addMessage(role: ROLE, content: "string") {
+    addMessage(role: ROLE, content: string) {
         const chat:CHAT = {
             id: crypto.randomUUID(),
             role: role,
