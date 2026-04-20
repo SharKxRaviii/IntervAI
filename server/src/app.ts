@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import interviewRouter from "./features/interview/interview.routes.js";
 import keywordRouter from "./features/keyword-extract/keyword.routes.js";
+import { auth } from "./middleware/auth.middleware.js";
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 app.use("/api/upload-resume", keywordRouter);
-app.use('/api/interview', interviewRouter);
+app.use('/api/interview', auth, interviewRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
