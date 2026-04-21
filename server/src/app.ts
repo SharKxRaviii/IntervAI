@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import interviewRouter from "./features/interview/interview.routes.js";
 import keywordRouter from "./features/keyword-extract/keyword.routes.js";
 import { auth } from "./middleware/auth.middleware.js";
+import { connectToDB } from "./config/db.js";
 
 dotenv.config();
 
@@ -28,4 +29,5 @@ app.use('/api/interview', auth, interviewRouter);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  connectToDB();
 });
