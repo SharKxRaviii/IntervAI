@@ -6,6 +6,7 @@ import interviewRouter from "./features/interview/interview.routes.js";
 import keywordRouter from "./features/keyword-extract/keyword.routes.js";
 import { auth } from "./middleware/auth.middleware.js";
 import { connectToDB } from "./config/db.js";
+import userRouter from "./features/auth/auth.routes.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.get("/", (_req: Request, res: Response) => {
   res.json({ message: "Server running" });
 });
 
+app.use("/api/auth", userRouter);
 app.use("/api/upload-resume", keywordRouter);
 app.use('/api/interview', auth, interviewRouter);
 
