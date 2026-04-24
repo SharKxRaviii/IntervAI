@@ -16,7 +16,7 @@ export class UserRepo {
 
     async findEmail(email: string){
         const query = `
-            SELECT email FROM users
+            SELECT id, email, password FROM users
             WHERE email = $1
         `;
         const values = [email];
