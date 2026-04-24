@@ -38,7 +38,13 @@ export class UserService {
             }
         );
 
-        return token;
+        return {
+            token,
+            user: {
+                id: user.id,
+                email: user.email
+            }
+        };
 
     }
 }
