@@ -13,4 +13,15 @@ export class UserRepo {
 
         return result.rows[0];
     }
+
+    async findEmail(email: string){
+        const query = `
+            SELECT email FROM users
+            WHERE email = $1
+        `;
+        const values = [email];
+
+        const result = await pool.query(query, values);
+        return result.rows.length > 0 ? result.rows[0]: null;
+    }
 }
