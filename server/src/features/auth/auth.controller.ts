@@ -4,7 +4,7 @@ import type { NextFunction, Request, Response } from "express";
 export class UserController {
     private userService = new UserService();
 
-    async signUp (req: Request, res: Response, next: NextFunction) {
+    signUp = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const {email, password} = req.body;
             if (!email || !password) {
@@ -20,7 +20,7 @@ export class UserController {
         }
     }
 
-    async login (req: Request, res: Response, next: NextFunction) {
+    login = async (req: Request, res: Response, next: NextFunction) => {
         try {          
             const {email, password} = req.body;
             if (!email || !password) {
