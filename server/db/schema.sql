@@ -5,3 +5,17 @@ CREATE TABLE users(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE interview(
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status TEXT NOT NULL,
+)
+
+CREATE TABLE chat (
+    id SERIAL PRIMARY KEY,
+    interview_id INT REFERENCES interview(id) ON DELETE CASCADE,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
