@@ -9,9 +9,9 @@ export class InterviewService {
         return result;
     }
 
-    async sendMessage (interview_id: number, role: ROLE, content: string) {
-        // save response
-        await this.interviewRepo.insertMessage(interview_id, role, content);
+    async sendMessage (interview_id: number, content: string) {
+        // Save user message
+        await this.interviewRepo.insertMessage(interview_id, "user", content);
 
         // get previous message for context
         const chats = await this.interviewRepo.fetchMessages(interview_id);
