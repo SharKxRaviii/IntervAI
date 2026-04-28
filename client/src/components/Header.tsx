@@ -1,37 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { User, LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { LogOut, AlertCircle, User, ChevronDown } from "lucide-react";
 import { authApi } from "../lib/api";
 import { ButtonLoader } from "./Loader";
+import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
-  const [user, setUser] = useState<{ fullName: string; email: string } | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, isLoading, logout } = useAuth();
+  const [isMockMode, setIsMockMode] = useState(false);
 
   useEffect(() => {
-    // Check auth status on mount
-    const currentUser = authApi.getUser();
-    setUser(currentUser);
-    setIsLoading(false);
-
-    // Listen for storage changes (login/logout from other tabs)
-    const handleStorageChange = () => {
-      setUser(authApi.getUser());
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    setIsMockMode(authApi.isMockMode());
   }, []);
-
-  const handleLogout = () => {
-    authApi.logout();
-    setUser(null);
-    window.location.href = "/login";
-  };
 
   if (isLoading) {
     return (
@@ -66,6 +48,16 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center gap-3">
+          {isMockMode && (
+            <div
+              className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs"
+              title="Using mock authentication - backend not connected"
+            >
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span>Mock Mode</span>
+            </div>
+          )}
+
           <Link
             href="/interview"
             className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600/80 to-pink-600/80 hover:from-purple-500 hover:to-pink-500 text-sm font-semibold text-white shadow-md transition-all"
@@ -77,15 +69,14 @@ export default function Header() {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10">
                 <div className="h-7 w-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xs font-bold text-white">
-                  {user.fullName?.charAt(0).toUpperCase() ||
-                    user.email?.charAt(0).toUpperCase()}
+                  {(user.fullName?.charAt(0) || user.email?.charAt(0) || "U").toUpperCase()}
                 </div>
                 <span className="text-sm text-gray-300 hidden sm:block">
                   {user.fullName || user.email}
                 </span>
               </div>
               <button
-                onClick={handleLogout}
+                onClick={logout}
                 className="p-2 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:border-purple-400/60 hover:bg-gradient-to-r hover:from-purple-600/20 hover:to-pink-600/20 transition-all"
                 title="Logout"
               >

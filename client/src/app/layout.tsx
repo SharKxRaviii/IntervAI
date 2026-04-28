@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
 import { LoadingProvider } from "../context/LoadingContext";
+import { AuthProvider } from "../context/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,14 +20,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <LoadingProvider>
-          <div className="min-h-screen flex flex-col">
-            <Header />
-            <div className="flex-1 flex flex-col">
-              {children}
+        <AuthProvider>
+          <LoadingProvider>
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <div className="flex-1 flex flex-col">
+                {children}
+              </div>
             </div>
-          </div>
-        </LoadingProvider>
+          </LoadingProvider>
+        </AuthProvider>
       </body>
     </html>
   );

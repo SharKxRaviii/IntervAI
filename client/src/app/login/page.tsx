@@ -18,10 +18,12 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { authApi } from "../../lib/api";
+import { useAuth } from "../../context/AuthContext";
 import Loader, { FullScreenLoader } from "../../components/Loader";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +44,14 @@ export default function LoginPage() {
         password: formData.password,
       });
 
-      authApi.setAuthData(response);
+      // Normalize user data - backend returns id, frontend uses _id
+      const normalizedUser = {
+        ...response.user,
+        _id: response.user.id || response.user._id,
+        fullName: response.user.fullName || formData.email.split("@")[0],
+      };
+
+      login(normalizedUser, response.token!);
 
       if (formData.rememberMe) {
         localStorage.setItem("rememberMe", "true");
@@ -50,10 +59,24 @@ export default function LoginPage() {
 
       router.push("/");
     } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          "Login failed. Please check your credentials."
-      );
+      let errorMessage = "An unexpected error occurred. Please try again.";
+
+      if (err.response) {
+        // Server responded with error status
+        errorMessage =
+          err.response.data?.message ||
+          err.response.data?.error ||
+          `Error ${err.response.status}: ${err.response.statusText}`;
+      } else if (err.request) {
+        // Request made but no response (network/CORS issue)
+        errorMessage =
+          "Unable to connect to server. Please check your internet connection.";
+      } else if (err.message) {
+        // Something else happened
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -48,20 +48,42 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
+      // Backend only accepts email and password for signup
       const response = await authApi.register({
-        fullName: formData.fullName,
         email: formData.email,
         password: formData.password,
-        role: "CANDIDATE",
       });
 
-      authApi.setAuthData(response);
-      router.push("/");
+      // After signup, user needs to login to get token
+      // Store user data from signup response
+      if (response.user) {
+        localStorage.setItem("user", JSON.stringify({
+          ...response.user,
+          fullName: formData.fullName, // Store fullName from form for display
+        }));
+      }
+
+      // Redirect to login page since signup doesn't return token
+      router.push("/login");
     } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          "Registration failed. Please try again."
-      );
+      let errorMessage = "An unexpected error occurred. Please try again.";
+
+      if (err.response) {
+        // Server responded with error status
+        errorMessage =
+          err.response.data?.message ||
+          err.response.data?.error ||
+          `Error ${err.response.status}: ${err.response.statusText}`;
+      } else if (err.request) {
+        // Request made but no response (network/CORS issue)
+        errorMessage =
+          "Unable to connect to server. Please check your internet connection.";
+      } else if (err.message) {
+        // Something else happened
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
