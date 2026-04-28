@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
+import RouteLoader from "../components/RouteLoader";
 import { LoadingProvider } from "../context/LoadingContext";
 import { AuthProvider } from "../context/AuthContext";
 
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <LoadingProvider>
+            <RouteLoader />
             <div className="min-h-screen flex flex-col">
               <Header />
               <div className="flex-1 flex flex-col">
