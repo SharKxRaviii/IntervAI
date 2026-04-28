@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 
 interface CustomJwtPayload extends JwtPayload {
-  _id: string;
+  _id: number;
   role: "CANDIDATE" | "INTERVIEWER";
 }
 
