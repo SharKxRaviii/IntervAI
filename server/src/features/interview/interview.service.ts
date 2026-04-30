@@ -16,27 +16,56 @@ export class InterviewService {
         // get previous message for context
         const chats = await this.interviewRepo.fetchMessages(interview_id);
 
-        // Format for AI
-        const messages = chats.map(c => ({
-            role: c.role,
-            content: c.content
-        }));
+        // Format for AI - map "ai" role to "assistant" and add system prompt
+        const systemPrompt = {
+            role: "system",
+            content: `You are an experienced technical interviewer conducting a job interview. Your role is to:
+- Ask relevant technical and behavioral questions based on the candidate's responses
+- Evaluate responses professionally and provide constructive feedback
+- Maintain a professional, encouraging tone
+- Ask follow-up questions to dig deeper into their experience
+- Focus on assessing problem-solving skills, technical knowledge, and cultural fit
+- Keep responses concise but informative
+
+Start by asking about their background and experience, then progress to technical questions based on their stated expertise. Be adaptive and natural in the conversation.`
+        };
+
+        const messages = [
+            systemPrompt,
+            ...chats.map(c => ({
+                role: c.role === "ai" ? "assistant" : c.role,
+                content: c.content
+            }))
+        ];
 
         // call AI
+        const apiKey = process.env.GROQ_API_KEY;
+        if (!apiKey) {
+            throw new Error("GROQ_API_KEY not configured");
+        }
+        
         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
             headers: {
-                // ai api_key = process.env.GROQ_API_KEY
-                "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+                "Authorization": `Bearer ${apiKey}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "llama3-70b-8192",
+                model: "llama-3.3-70b-versatile",
                 messages
             })
         });
 
         const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error?.message || `AI API error: ${response.status}`);
+        }
+        
+        if (!data.choices || data.choices.length === 0) {
+            throw new Error("No response from AI");
+        }
+        
         const aiReply = data.choices[0].message.content;
 
         // Save AI response

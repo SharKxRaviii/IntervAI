@@ -29,8 +29,9 @@ export class UserService {
 
         const token = jwt.sign(
             {
-                id: user.id,
-                email: user.email
+                _id: user.id,
+                email: user.email,
+                role: "CANDIDATE"
             },
             process.env.SECRET_KEY as string,
             {
@@ -41,8 +42,9 @@ export class UserService {
         return {
             token,
             user: {
-                id: user.id,
-                email: user.email
+                _id: user.id,
+                email: user.email,
+                role: "CANDIDATE"
             }
         };
 
