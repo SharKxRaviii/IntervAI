@@ -7,10 +7,15 @@ interface CustomJwtPayload extends JwtPayload {
 }
 
 export const auth = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization;
-  if (!token) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
     return res.status(403).json({ message: "Unauthorised" });
   }
+
+  // Extract token from "Bearer <token>" format
+  const token = authHeader.startsWith("Bearer ") 
+    ? authHeader.slice(7) 
+    : authHeader;
 
   const secretKey = process.env.SECRET_KEY;
   if (!secretKey) {
@@ -24,6 +29,8 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
       _id: payload._id,
       role: payload.role,
     };
+    
+    next();
   } catch (error) {
     return res.status(401).json({ message: "Invalid token" });
   }
