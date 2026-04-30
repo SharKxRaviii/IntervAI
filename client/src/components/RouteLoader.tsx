@@ -1,23 +1,25 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useLoading } from "../context/LoadingContext";
 
-export default function RouteLoader() {
+function RouteLoaderContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { showLoader, hideLoader } = useLoading();
+
   const [isNavigating, setIsNavigating] = useState(false);
-  const previousPathRef = useRef(pathname + searchParams?.toString());
+  const previousPathRef = useRef(
+    pathname + (searchParams?.toString() || "")
+  );
 
   useEffect(() => {
     const currentPath = pathname + (searchParams?.toString() || "");
-    
+
     if (previousPathRef.current !== currentPath && !isNavigating) {
       setIsNavigating(true);
       showLoader("Loading...");
-      
       previousPathRef.current = currentPath;
     }
   }, [pathname, searchParams, showLoader, isNavigating]);
@@ -34,4 +36,12 @@ export default function RouteLoader() {
   }, [isNavigating, hideLoader]);
 
   return null;
+}
+
+export default function RouteLoader() {
+  return (
+    <Suspense fallback={null}>
+      <RouteLoaderContent />
+    </Suspense>
+  );
 }
